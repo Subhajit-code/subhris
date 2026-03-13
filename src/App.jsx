@@ -3,16 +3,18 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Applayout from "./component/page/AppLayout";
 import { FavouriteSong } from "./FavouriteSong";
 import { Home } from "./Home";
+import Search from "./Search";
+import Upload from "./Upload";
+import Admin from "./Admin";
 import './App.css'
-import { Play } from "./component/ui/play";
-import { song_all_Det } from "./songdetails";
+import { MusicProvider } from "./context/MusicContext";
 
 const App = () => {
   const router = createBrowserRouter([
     {   
       path: "/",
       element: <Applayout />,
-      children: [ // Fixed property name
+      children: [
         {
           path: "/",
           element: <Home/>,
@@ -22,19 +24,27 @@ const App = () => {
           element: <FavouriteSong/>,
         },
         {
-          path: "/Play",
-          element: <Play/>,
+          path: "/search",
+          element: <Search/>,
         },
         {
-          path: "/:id",
-          element: <Play/>,
-          loader:song_all_Det,
+          path: "/upload",
+          element: <Upload/>,
+        },
+        {
+          path: "/admin",
+          element: <Admin/>,
         },
       ],
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <MusicProvider>
+      <RouterProvider router={router} />
+    </MusicProvider>
+  );
 };
 
 export default App;
+

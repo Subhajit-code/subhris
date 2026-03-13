@@ -1,170 +1,134 @@
-import React, { useRef, useState, useEffect } from "react";
-import { FaRegPauseCircle, FaPlayCircle } from "react-icons/fa";
-import { BiSolidSkipPreviousCircle, BiSolidSkipNextCircle } from "react-icons/bi";
-import Songdata from "../api/songData.json";
+import React from "react";
+import { FaPlay, FaPause, FaStepForward, FaStepBackward } from "react-icons/fa";
+import { HiVolumeUp, HiVolumeOff } from "react-icons/hi";
+import { useMusic } from "./context/MusicContext";
+import { motion, AnimatePresence } from "framer-motion";
+import ReactPlayer from 'react-player';
 
-export const MasterPlay = () => {
-  const [index, setIndex] = useState(1);
-  const [currentSong, setCurrentSong] = useState(Songdata.find((item) => item.id === index));
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(1);
-  const audioRef = useRef(null);
+import { IoClose } from "react-icons/io5";
 
-  useEffect(() => {
-    // Update duration when audio metadata is loaded
-    const handleLoadedMetadata = () => {
-      setDuration(audioRef.current.duration);
+const MasterPlay = () => {
+    const { 
+        currentSong, isPlaying, togglePlay, currentTime, duration, seek, 
+        volume, setVolume, setIsPlaying, setCurrentTime, setDuration,
+        showVideo, setShowVideo
+    } = useMusic();
+
+    if (!currentSong) return null;
+
+    const formatTime = (time) => {
+        const mins = Math.floor(time / 60);
+        const secs = Math.floor(time % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    // Update current time during playback
-    const handleTimeUpdate = () => {
-      setCurrentTime(audioRef.current.currentTime);
+    const handleProgressChange = (e) => {
+        const time = (e.target.value / 100) * duration;
+        seek(time);
     };
 
-    const audio = audioRef.current;
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
+    return (
+        <AnimatePresence>
+            <motion.div 
+                className="master-play"
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 100, opacity: 0 }}
+                transition={{ type: "spring", damping: 20, stiffness: 100 }}
+            >
+                {/* Hidden player for when the modal is closed but song still playing */}
+                {!showVideo && currentSong?.isYouTube && (
+                    <div style={{ position: 'absolute', top: '-1000px', left: '-1000px', pointerEvents: 'none' }}>
+                        <ReactPlayer 
+                            url={currentSong.filePath}
+                            playing={isPlaying}
+                            volume={volume}
+                            onProgress={(state) => setCurrentTime(state.playedSeconds)}
+                            onDuration={(d) => setDuration(d)}
+                            onEnded={() => setIsPlaying(false)}
+                            width="0"
+                            height="0"
+                        />
+                    </div>
+                )}
+                <div className="player-info">
+                    <motion.img 
+                        src={currentSong.image} 
+                        alt={currentSong.songname} 
+                        className="player-poster" 
+                        animate={isPlaying ? { boxShadow: ['0 0 10px rgba(232, 28, 255, 0.2)', '0 0 20px rgba(232, 28, 255, 0.6)', '0 0 10px rgba(232, 28, 255, 0.2)'] } : {}}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                    />
+                    <div>
+                        <div className="song-name" style={{ fontSize: '15px', textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>{currentSong.songname}</div>
+                        <div className="artist-name" style={{ fontSize: '12px', color: 'var(--galaxy-pink)' }}>{currentSong.artistName}</div>
+                    </div>
+                </div>
 
-    return () => {
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-    };
-  }, [currentSong]);
+                <div className="player-controls">
+                    <div className="controls-top">
+                        <button className="control-btn"><FaStepBackward size={16} /></button>
+                        <button className="control-btn play-pause-btn" onClick={togglePlay}>
+                            {isPlaying ? <FaPause size={16} /> : <FaPlay size={16} style={{ marginLeft: '2px' }} />}
+                        </button>
+                        <button className="control-btn"><FaStepForward size={16} /></button>
+                    </div>
 
-  const handleNext = () => {
-    const nextIndex = index + 1 > Songdata.length ? 1 : index + 1;
-    const nextSong = Songdata.find((item) => item.id === nextIndex);
-    setIndex(nextIndex);
-    setCurrentSong(nextSong);
-    if (isPlaying) {
-      setTimeout(() => {
-        audioRef.current.play();
-      }, 0);
-    }
-  };
+                    <div className="progress-container">
+                        <span className="time">{formatTime(currentTime)}</span>
+                        <div className="progress-bar">
+                            <input 
+                                type="range" 
+                                min="0" 
+                                max="100" 
+                                value={(currentTime / duration) * 100 || 0}
+                                onChange={handleProgressChange}
+                                style={{
+                                    position: 'absolute',
+                                    width: '100%',
+                                    height: '100%',
+                                    opacity: 0,
+                                    cursor: 'pointer',
+                                    zIndex: 2
+                                }}
+                            />
+                            <div 
+                                className="progress-fill" 
+                                style={{ width: `${(currentTime / duration) * 100 || 0}%` }}
+                            ></div>
+                        </div>
+                        <span className="time">{formatTime(duration)}</span>
+                    </div>
+                </div>
 
-  const handlePrevious = () => {
-    const prevIndex = index - 1 < 1 ? Songdata.length : index - 1;
-    const prevSong = Songdata.find((item) => item.id === prevIndex);
-    setIndex(prevIndex);
-    setCurrentSong(prevSong);
-    if (isPlaying) {
-      setTimeout(() => {
-        audioRef.current.play();
-      }, 0);
-    }
-  };
-
-  const handlePlayPause = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const handleSeek = (e) => {
-    const time = (e.target.value / 100) * duration;
-    audioRef.current.currentTime = time;
-    setCurrentTime(time);
-  };
-
-  const handleVolumeChange = (e) => {
-    const newVolume = e.target.value / 100;
-    setVolume(newVolume);
-    audioRef.current.volume = newVolume;
-  };
-
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  return (
-    <div className="master_play">
-      <div className="wave" id="wave">
-        <div className="wave1"></div>
-        <div className="wave1"></div>
-        <div className="wave1"></div>
-      </div>
-      <img src={currentSong.image} alt={currentSong.songname} className="h-16 w-16" />
-      <h5 id="title" className="text-lg">
-        {currentSong.songname}
-        <div className="subtitle text-sm text-gray-400">{currentSong.artistName}</div>
-      </h5>
-      <div className="icon flex gap-4">
-        <BiSolidSkipPreviousCircle 
-          className="icon-button text-2xl cursor-pointer" 
-          onClick={handlePrevious} 
-        />
-        {!isPlaying ? (
-          <FaPlayCircle 
-            className="icon-button text-2xl cursor-pointer" 
-            onClick={handlePlayPause} 
-          />
-        ) : (
-          <FaRegPauseCircle 
-            className="icon-button text-2xl cursor-pointer" 
-            onClick={handlePlayPause} 
-          />
-        )}
-        <audio 
-          ref={audioRef}
-          src={currentSong.filePath}
-          onEnded={handleNext}
-        />
-        <BiSolidSkipNextCircle 
-          className="icon-button text-2xl cursor-pointer" 
-          onClick={handleNext} 
-        />
-      </div>
-      <span id="currentStart">{formatTime(currentTime)}</span>
-      <div className="bar w-full max-w-md">
-        <input 
-          type="range" 
-          id="seek" 
-          min="0" 
-          max="100" 
-          value={(currentTime / duration) * 100 || 0}
-          onChange={handleSeek}
-          className="w-full"
-        />
-        <div 
-          className="bar2" 
-          style={{ width: `${(currentTime / duration) * 100 || 0}%` }}
-        ></div>
-        <div 
-          className="dot" 
-          style={{ left: `${(currentTime / duration) * 100 || 0}%` }}
-        ></div>
-      </div>
-      <span id="currentEnd">{formatTime(duration)}</span>
-      <div className="vol w-32">
-        <input 
-          type="range" 
-          min="0" 
-          max="100" 
-          value={volume * 100}
-          onChange={handleVolumeChange}
-          className="w-full"
-        />
-        <div 
-          className="vol_bar" 
-          style={{ width: `${volume * 100}%` }}
-        ></div>
-        <div 
-          className="dot" 
-          style={{ left: `${volume * 100}%` }}
-        ></div>
-      </div>
-    </div>
-  );
+                <div className="volume-container">
+                    {volume === 0 ? <HiVolumeOff size={20} /> : <HiVolumeUp size={20} />}
+                    <div className="progress-bar" style={{ width: '100px' }}>
+                        <input 
+                            type="range" 
+                            min="0" 
+                            max="1" 
+                            step="0.01"
+                            value={volume}
+                            onChange={(e) => setVolume(parseFloat(e.target.value))}
+                            style={{
+                                position: 'absolute',
+                                width: '100%',
+                                height: '100%',
+                                opacity: 0,
+                                cursor: 'pointer',
+                                zIndex: 2
+                            }}
+                        />
+                        <div 
+                            className="progress-fill" 
+                            style={{ width: `${volume * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+            </motion.div>
+        </AnimatePresence>
+    );
 };
 
 export default MasterPlay;
