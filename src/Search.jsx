@@ -23,8 +23,8 @@ const Search = () => {
 
     return (
         <div className="section-container animate-fade-in">
-            <div className="search-bar-container" style={{ position: 'sticky', top: '0', background: 'transparent', padding: '20px 0', zIndex: 10 }}>
-                <div className="search-input-wrapper" style={{ position: 'relative', maxWidth: '400px' }}>
+            <div className="search-bar-container">
+                <div className="search-input-wrapper">
                     <FaSearch style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#b3b3b3' }} />
                     <input 
                         type="text" 

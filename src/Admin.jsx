@@ -179,59 +179,61 @@ const Admin = () => {
             </header>
 
             <div className="glass" style={{ padding: '20px', background: 'rgba(0,0,0,0.3)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-dim)', fontSize: '14px' }}>
-                            <th style={{ padding: '16px' }}>#</th>
-                            <th style={{ padding: '16px' }}>Title</th>
-                            <th style={{ padding: '16px' }}>Artist</th>
-                            <th style={{ padding: '16px', textAlign: 'right' }}>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <AnimatePresence>
-                            {allSongs.map((song, index) => (
-                                <motion.tr 
-                                    key={song.id}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
-                                >
-                                    <td style={{ padding: '16px', color: 'var(--text-dim)' }}>{index + 1}</td>
-                                    <td style={{ padding: '16px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <img src={song.image} style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} />
-                                            <span style={{ fontWeight: '600' }}>{song.songname}</span>
-                                        </div>
-                                    </td>
-                                    <td style={{ padding: '16px', color: 'var(--text-dim)' }}>{song.artistName}</td>
-                                    <td style={{ padding: '16px', textAlign: 'right' }}>
-                                        <button 
-                                            onClick={() => {
-                                                if (window.confirm(`Vanish "${song.songname}" from the collection?`)) {
-                                                    removeSong(song.id);
-                                                }
-                                            }}
-                                            style={{
-                                                background: 'rgba(255, 68, 68, 0.1)',
-                                                border: 'none',
-                                                color: '#ff4444',
-                                                width: '36px',
-                                                height: '36px',
-                                                borderRadius: '8px',
-                                                cursor: 'pointer',
-                                                fontSize: '16px'
-                                            }}
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </td>
-                                </motion.tr>
-                            ))}
-                        </AnimatePresence>
-                    </tbody>
-                </table>
+                <div className="table-container">
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                        <thead>
+                            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-dim)', fontSize: '14px' }}>
+                                <th style={{ padding: '16px' }}>#</th>
+                                <th style={{ padding: '16px' }}>Title</th>
+                                <th style={{ padding: '16px' }}>Artist</th>
+                                <th style={{ padding: '16px', textAlign: 'right' }}>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <AnimatePresence>
+                                {allSongs.map((song, index) => (
+                                    <motion.tr 
+                                        key={song.id}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                                    >
+                                        <td style={{ padding: '16px', color: 'var(--text-dim)' }}>{index + 1}</td>
+                                        <td style={{ padding: '16px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                <img src={song.image} style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} />
+                                                <span style={{ fontWeight: '600' }}>{song.songname}</span>
+                                            </div>
+                                        </td>
+                                        <td style={{ padding: '16px', color: 'var(--text-dim)' }}>{song.artistName}</td>
+                                        <td style={{ padding: '16px', textAlign: 'right' }}>
+                                            <button 
+                                                onClick={() => {
+                                                    if (window.confirm(`Vanish "${song.songname}" from the collection?`)) {
+                                                        removeSong(song.id);
+                                                    }
+                                                }}
+                                                style={{
+                                                    background: 'rgba(255, 68, 68, 0.1)',
+                                                    border: 'none',
+                                                    color: '#ff4444',
+                                                    width: '36px',
+                                                    height: '36px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '16px'
+                                                }}
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                        </td>
+                                    </motion.tr>
+                                ))}
+                            </AnimatePresence>
+                        </tbody>
+                    </table>
+                </div>
                 {allSongs.length === 0 && (
                     <div style={{ textAlign: 'center', padding: '100px', color: 'var(--text-dim)' }}>
                         <FaMusic size={40} style={{ marginBottom: '20px', opacity: 0.3 }} />

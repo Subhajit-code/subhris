@@ -60,8 +60,8 @@ const MasterPlay = () => {
                         transition={{ repeat: Infinity, duration: 2 }}
                     />
                     <div>
-                        <div className="song-name" style={{ fontSize: '15px', textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>{currentSong.songname}</div>
-                        <div className="artist-name" style={{ fontSize: '12px', color: 'var(--galaxy-pink)' }}>{currentSong.artistName}</div>
+                        <div className="song-name">{currentSong.songname}</div>
+                        <div className="artist-name">{currentSong.artistName}</div>
                     </div>
                 </div>
 

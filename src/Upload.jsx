@@ -27,9 +27,9 @@ const Upload = () => {
     };
 
     return (
-        <div className="section-container animate-fade-in" style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 20px' }}>
-            <header style={{ textAlign: 'center', marginBottom: '40px' }}>
-                <h1 className="hero-title-cinematic" style={{ fontSize: '48px', marginBottom: '10px' }}>
+        <div className="section-container upload-container animate-fade-in">
+            <header>
+                <h1 className="hero-title-cinematic">
                     SUBH<span className="text-gradient-cosmic">RIS</span> Launchpad
                 </h1>
                 <p style={{ color: 'var(--secondary-glow)', fontSize: '18px', letterSpacing: '1px' }}>Deploy your melodies into the personal cosmos</p>

@@ -22,6 +22,7 @@ const Applayout = () =>{
                     <Outlet/>
                 </main>
             </div>
+            <MasterPlay />
             <VideoPopup />
         </div>
     )

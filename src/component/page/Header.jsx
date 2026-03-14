@@ -23,7 +23,7 @@ export const Header = ({ toggleSidebar, isSidebarOpen }) => {
                             width: '44px',
                             height: '44px',
                             borderRadius: '12px',
-                            display: 'none',
+                            display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             cursor: 'pointer'

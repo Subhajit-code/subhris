@@ -6,7 +6,7 @@ export const Home = () =>{
     const { allSongs, loading } = useMusic();
 
     return (
-        <div className="home-container" style={{ padding: '40px' }}>
+        <div className="home-container">
             <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
