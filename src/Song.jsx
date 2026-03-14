@@ -1,3 +1,5 @@
+import React, { useState, useRef } from 'react';
+
 export const SongCard = ({ SongData, onChangeSong }) => {
   const { image, songname, artistName, id, filePath } = SongData;
   const audioRef = useRef(null);
